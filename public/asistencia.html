@@ -162,19 +162,43 @@ function marcarTodos(estado) {
     calcularAsistencia();
 }
 
-function guardarAsistenciaOficial() {
-    const presentes = document.getElementById('totalPresentes').innerText;
-    const porcentaje = document.getElementById('porcentajePresentismo').innerText;
-    alert(`¡Asistencia guardada con éxito!\\nPresentes: ${presentes} jugadores (${porcentaje} de presentismo).`);
-    window.location.href = 'Panel.html';
-}
+async function guardarAsistenciaOficial() {
+    const checkboxes = document.querySelectorAll('.check-asistencia');
+    
+    try {
+        // Recorremos cada checkbox de la tabla para guardarlo en Supabase
+        for (const chk of checkboxes) {
+            const estadoTexto = chk.checked ? 'Presente' : 'Ausente';
+            
+            const { error } = await supabaseClient
+                .from('asistencias')
+                .insert([
+                    { 
+                        estado_asistencia: estadoTexto,
+                        fecha: new Date().toISOString().split('T')[0]
+                    }
+                ]);
 
-// Calcular al iniciar por si acaso
-calcularAsistencia();
+            if (error) {
+                console.error('Error al guardar asistencia:', error);
+            }
+        }
+
+        alert('¡Asistencias guardadas y sincronizadas con Supabase con éxito!');
+        window.location.href = 'Panel.html';
+
+    } catch (err) {
+        console.error('Error de conexión:', err);
+        alert('Hubo un problema al conectar con la base de datos.');
+    }
+}
 </script>
+
+<!-- Scripts externos cargados correctamente -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="api/config.js"></script>
 <script src="js/api.js"></script>
 <script src="js/main.js"></script>
+
 </body>
 </html>

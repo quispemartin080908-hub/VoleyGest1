@@ -8,43 +8,6 @@
 <link rel="stylesheet" href="css/EstiloPanel.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.75);
-    backdrop-filter: blur(6px);
-    justify-content: center;
-    align-items: center;
-}
-.modal-content {
-    background: rgba(0, 25, 50, 0.98);
-    border: 1px solid rgba(0, 210, 255, 0.5);
-    padding: 30px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 550px;
-    color: #fff;
-    box-shadow: 0 15px 40px rgba(0,210,255,0.25);
-    position: relative;
-    animation: fadeIn 0.25s ease;
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-.close-modal {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 24px;
-    color: #00d2ff;
-    cursor: pointer;
-}
 .select-custom {
     width: 100%;
     padding: 12px;
@@ -53,31 +16,17 @@
     border-radius: 8px;
     color: #fff;
     font-size: 15px;
-    margin-bottom: 15px;
 }
-.receipt-box {
-    background: rgba(0, 15, 30, 0.8);
-    border: 1px dashed #00d2ff;
-    padding: 15px;
-    border-radius: 10px;
-    margin: 15px 0;
-    font-family: monospace;
-    font-size: 13px;
-    line-height: 1.6;
-}
-.btn-secondary {
-    background: rgba(0, 210, 255, 0.15);
-    border: 1px solid #00d2ff;
-    color: #00d2ff;
-    padding: 10px 18px;
+.alerta-exito {
+    display: none;
+    background: rgba(46, 213, 115, 0.2);
+    border: 1px solid #2ed573;
+    color: #2ed573;
+    padding: 12px;
     border-radius: 8px;
-    cursor: pointer;
+    margin-bottom: 20px;
     font-weight: bold;
-    transition: all 0.3s;
-}
-.btn-secondary:hover {
-    background: #00d2ff;
-    color: #001f3f;
+    text-align: center;
 }
 </style>
 </head>
@@ -109,255 +58,95 @@
     </div>
 
     <div class="content">
-        <div class="flex-header">
-            <h1>Gestión y Control de Pagos</h1>
-            <button class="btn-save" onclick="abrirModal('modalNuevoPago')"><i class="fas fa-plus"></i> Registrar Otro Pago</button>
-        </div>
-        <p class="subtext">Selecciona un concepto para ver su comprobante o realizar el abono pendiente.</p>
+        <h1>Control de Pagos y Cuotas</h1>
+        <p class="subtext">Registra y administra los cobros de cuotas sociales, indumentaria o inscripciones a torneos.</p>
 
-        <!-- Resumen Financiero Rápido -->
-        <div class="stats-grid" style="margin-bottom: 30px;">
-            <div class="stat-item">
-                <div class="stat-value" id="totalAbonado">$12.000</div>
-                <div class="stat-label">Total Abonado (Ciclo 2026)</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="saldoPendiente" style="color: #ff4757;">$5.000</div>
-                <div class="stat-label">Saldo Pendiente</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="estadoGeneral" style="color: #ffa502;">1 Pendiente</div>
-                <div class="stat-label">Estado de Cuenta</div>
-            </div>
+        <div id="alertaExito" class="alerta-exito">
+            <i class="fas fa-check-circle"></i> ¡Pago registrado y sincronizado en Supabase con éxito!
         </div>
 
-        <!-- Tarjetas de Pagos -->
-        <div class="cards" id="contenedorPagos">
-            <!-- Tarjeta 1: Cuota Mensual -->
-            <div class="card card-left" onclick="abrirModal('modalCuota')">
-                <h3>Cuota Mensual - Noviembre</h3>
-                <div class="number text-success">PAGO</div>
-                <p>Monto: $12.000 | Mes actual cubierto correctamente.</p>
-                <div class="card-footer"><span><i class="fas fa-file-invoice"></i> Clic para ver recibo oficial</span></div>
-            </div>
-
-            <!-- Tarjeta 2: Torneo Regional -->
-            <div class="card card-left" id="cardTorneo" onclick="abrirModal('modalTorneo')">
-                <h3>Inscripción Torneo Regional</h3>
-                <div class="number text-danger" id="estadoTorneoText">PENDIENTE</div>
-                <p id="descTorneoText">Monto a abonar: $5.000</p>
-                <div class="card-footer"><span id="footerTorneoText"><i class="fas fa-credit-card"></i> Clic para gestionar el pago</span></div>
-            </div>
+        <div class="config-box" style="max-width: 600px; margin: 0 auto;">
+            <h3><i class="fas fa-cash-register"></i> Registrar Nuevo Pago</h3>
+            <form id="formPago" onsubmit="registrarPagoSupabase(event)">
+                <div class="form-group">
+                    <label>Concepto del Pago</label>
+                    <input type="text" id="conceptoPago" placeholder="Ej. Cuota Mensual - Noviembre" required>
+                </div>
+                <div class="form-group">
+                    <label>Monto ($)</label>
+                    <input type="number" id="montoPago" placeholder="Ej. 5000" required>
+                </div>
+                <div class="form-group">
+                    <label>Método de Pago</label>
+                    <select id="metodoPago" class="select-custom">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+                        <option value="Mercado Pago">Mercado Pago</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Estado del Pago</label>
+                    <select id="estadoPago" class="select-custom">
+                        <option value="PAGO">PAGO</option>
+                        <option value="PENDIENTE">PENDIENTE</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-save btn-margin-top" style="width: 100%;">
+                    <i class="fas fa-save"></i> Guardar Pago
+                </button>
+            </form>
         </div>
-
-        <!-- Historial de Transacciones -->
-        <div class="stats-section" style="margin-top: 40px;">
-            <h2><i class="fas fa-history"></i> Historial de Movimientos</h2>
-            <table class="user-table">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Concepto</th>
-                        <th>Método</th>
-                        <th>Monto</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaHistorialPagos">
-                    <tr>
-                        <td>05/11/2026</td>
-                        <td>Cuota Mensual Noviembre</td>
-                        <td>Transferencia</td>
-                        <td>$12.000</td>
-                        <td><span class="status-active"><i class="fas fa-check-circle"></i> Aprobado</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL 1: COMPROBANTE CUOTA MENSUAL -->
-<div id="modalCuota" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="cerrarModal('modalCuota')">&times;</span>
-        <h2 style="color: #00d2ff; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> Comprobante de Pago</h2>
-        <div class="receipt-box">
-            <strong>VOLEYGEST - COMPROBANTE OFICIAL</strong><br>
-            -----------------------------------------<br>
-            <strong>N° Operación:</strong> #VG-2026-0894<br>
-            <strong>Jugador:</strong> Martín Quispe (1ª Div.)<br>
-            <strong>Concepto:</strong> Cuota Mensual Noviembre<br>
-            <strong>Monto Abonado:</strong> $12.000 ARS<br>
-            <strong>Fecha de Pago:</strong> 05/11/2026 - 18:42 hs<br>
-            <strong>Estado:</strong> PAGADO / VERIFICADO
-        </div>
-        <button class="btn-secondary" onclick="descargarRecibo('Cuota Mensual Noviembre', '$12.000', '#VG-2026-0894')">
-            <i class="fas fa-download"></i> Descargar Comprobante (.txt)
-        </button>
-    </div>
-</div>
-
-<!-- MODAL 2: GESTIONAR PAGO PENDIENTE (TORNEO) -->
-<div id="modalTorneo" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="cerrarModal('modalTorneo')">&times;</span>
-        <h2 style="color: #ff4757; margin-bottom: 15px;" id="tituloModalTorneo"><i class="fas fa-exclamation-circle"></i> Abonar Inscripción Torneo</h2>
-        <div id="formularioPagoTorneo">
-            <p style="margin-bottom: 15px; color: #87cefa;">Selecciona el medio de pago e ingresa el código de transferencia para acreditar el pago al instante.</p>
-            <div class="form-group">
-                <label>Método de Pago</label>
-                <select id="metodoPagoTorneo" class="select-custom">
-                    <option value="Transferencia Bancaria">Transferencia Bancaria (Alias: voleygest.cen)</option>
-                    <option value="Mercado Pago">Mercado Pago</option>
-                    <option value="Efectivo en Secretaría">Efectivo en Secretaría</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>N° de Comprobante / Referencia</label>
-                <input type="text" id="refPagoTorneo" placeholder="Ej. MP-9948210" required>
-            </div>
-            <button class="btn-save" style="width: 100%;" onclick="procesarPagoTorneo()">
-                <i class="fas fa-check"></i> Confirmar y Acreditar Pago ($5.000)
-            </button>
-        </div>
-        <div id="detalleTorneoPagado" style="display: none;">
-            <div class="receipt-box">
-                <strong>VOLEYGEST - PAGO ACREDITADO</strong><br>
-                -----------------------------------------<br>
-                <strong>Concepto:</strong> Inscripción Torneo Regional<br>
-                <strong>Monto:</strong> $5.000 ARS<br>
-                <strong>Método:</strong> <span id="resMetodo"></span><br>
-                <strong>Referencia:</strong> <span id="resRef"></span><br>
-                <strong>Estado:</strong> ACREDITADO
-            </div>
-            <button class="btn-secondary" onclick="descargarRecibo('Inscripción Torneo Regional', '$5.000', document.getElementById('resRef').innerText)">
-                <i class="fas fa-download"></i> Descargar Comprobante
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL 3: REGISTRAR NUEVO PAGO -->
-<div id="modalNuevoPago" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="cerrarModal('modalNuevoPago')">&times;</span>
-        <h2 style="color: #00d2ff; margin-bottom: 15px;"><i class="fas fa-plus-circle"></i> Registrar Nuevo Concepto</h2>
-        <div class="form-group">
-            <label>Concepto (Ej. Indumentaria, Seguro Deportivo)</label>
-            <input type="text" id="nuevoConcepto" placeholder="Ej. Camiseta Oficial">
-        </div>
-        <div class="form-group">
-            <label>Monto ($)</label>
-            <input type="number" id="nuevoMonto" placeholder="Ej. 8500">
-        </div>
-        <div class="form-group">
-            <label>Estado</label>
-            <select id="nuevoEstado" class="select-custom">
-                <option value="PAGO">PAGO</option>
-                <option value="PENDIENTE">PENDIENTE</option>
-            </select>
-        </div>
-        <button class="btn-save" style="width: 100%;" onclick="agregarNuevaTarjetaPago()">Guardar Concepto</button>
     </div>
 </div>
 
 <script>
-let torneoPagado = false;
+async function registrarPagoSupabase(event) {
+    event.preventDefault();
 
-function abrirModal(id) {
-    document.getElementById(id).style.display = 'flex';
-}
-function cerrarModal(id) {
-    document.getElementById(id).style.display = 'none';
-}
+    const concepto = document.getElementById('conceptoPago').value.trim();
+    const monto = parseFloat(document.getElementById('montoPago').value);
+    const metodo = document.getElementById('metodoPago').value;
+    const estado = document.getElementById('estadoPago').value;
 
-function procesarPagoTorneo() {
-    const metodo = document.getElementById('metodoPagoTorneo').value;
-    const ref = document.getElementById('refPagoTorneo').value.trim() || 'OP-' + Math.floor(Math.random() * 90000 + 10000);
-
-    torneoPagado = true;
-
-    // Actualizar tarjeta principal
-    const estadoText = document.getElementById('estadoTorneoText');
-    estadoText.innerText = 'PAGO';
-    estadoText.className = 'number text-success';
-    document.getElementById('descTorneoText').innerText = 'Monto: $5.000 | Abonado vía ' + metodo;
-    document.getElementById('footerTorneoText').innerHTML = '<i class="fas fa-file-invoice"></i> Clic para ver comprobante';
-
-    // Actualizar KPIs superiores
-    document.getElementById('totalAbonado').innerText = '$17.000';
-    document.getElementById('saldoPendiente').innerText = '$0';
-    document.getElementById('saldoPendiente').style.color = '#2ed573';
-    document.getElementById('estadoGeneral').innerText = 'Al día';
-    document.getElementById('estadoGeneral').style.color = '#2ed573';
-
-    // Agregar al historial
-    const tabla = document.getElementById('tablaHistorialPagos');
-    const hoy = new Date().toLocaleDateString('es-AR');
-    tabla.innerHTML = `
-        <tr>
-            <td>${hoy}</td>
-            <td>Inscripción Torneo Regional</td>
-            <td>${metodo}</td>
-            <td>$5.000</td>
-            <td><span class="status-active"><i class="fas fa-check-circle"></i> Aprobado</span></td>
-        </tr>
-    ` + tabla.innerHTML;
-
-    // Cambiar vista dentro del modal
-    document.getElementById('tituloModalTorneo').innerHTML = '<i class="fas fa-check-circle"></i> Detalle de Pago Acreditado';
-    document.getElementById('tituloModalTorneo').style.color = '#00d2ff';
-    document.getElementById('formularioPagoTorneo').style.display = 'none';
-    document.getElementById('resMetodo').innerText = metodo;
-    document.getElementById('resRef').innerText = ref;
-    document.getElementById('detalleTorneoPagado').style.display = 'block';
-
-    alert('¡Pago acreditado correctamente!');
-}
-
-function agregarNuevaTarjetaPago() {
-    const concepto = document.getElementById('nuevoConcepto').value.trim();
-    const monto = document.getElementById('nuevoMonto').value.trim();
-    const estado = document.getElementById('nuevoEstado').value;
-
-    if (!concepto || !monto) {
-        alert('Por favor completa el concepto y el monto.');
+    if (!concepto || isNaN(monto)) {
+        alert('Por favor complete todos los campos obligatorios correctamente.');
         return;
     }
 
-    const claseColor = estado === 'PAGO' ? 'text-success' : 'text-danger';
-    const contenedor = document.getElementById('contenedorPagos');
+    try {
+        const { error } = await supabaseClient
+            .from('pagos')
+            .insert([
+                {
+                    concepto: concepto,
+                    monto: monto,
+                    metodo_pago: metodo,
+                    estado_pago: estado
+                }
+            ]);
 
-    const nuevaCard = `
-        <div class="card card-left" onclick="alert('Concepto: ${concepto} - Monto: $${monto} - Estado: ${estado}')">
-            <h3>${concepto}</h3>
-            <div class="number ${claseColor}">${estado}</div>
-            <p>Monto registrado: $${monto}</p>
-            <div class="card-footer"><span><i class="fas fa-info-circle"></i> Registrado manualmente</span></div>
-        </div>
-    `;
-    contenedor.innerHTML += nuevaCard;
+        if (error) {
+            console.error('Error al guardar pago:', error);
+            alert('Error al registrar en Supabase: ' + error.message);
+            return;
+        }
 
-    document.getElementById('nuevoConcepto').value = '';
-    document.getElementById('nuevoMonto').value = '';
-    cerrarModal('modalNuevoPago');
-}
+        const alerta = document.getElementById('alertaExito');
+        alerta.style.display = 'block';
+        setTimeout(() => { alerta.style.display = 'none'; }, 4000);
 
-function descargarRecibo(concepto, monto, operacion) {
-    const contenido = `====================================\n      VOLEYGEST - RECIBO OFICIAL\n====================================\nJugador: Martín Quispe\nConcepto: ${concepto}\nMonto: ${monto}\nOperación: ${operacion}\nFecha de emisión: ${new Date().toLocaleString('es-AR')}\n====================================`;
-    const blob = new Blob([contenido], { type: 'text/plain' });
-    const enlace = document.createElement('a');
-    enlace.href = URL.createObjectURL(blob);
-    enlace.download = `Comprobante_${concepto.replace(/\s+/g, '_')}.txt`;
-    enlace.click();
+        document.getElementById('formPago').reset();
+
+    } catch (err) {
+        console.error('Error de conexión:', err);
+        alert('No se pudo conectar con la base de datos.');
+    }
 }
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="api/config.js"></script>
 <script src="js/api.js"></script>
 <script src="js/main.js"></script>
-</body>
-</html>
 </body>
 </html>

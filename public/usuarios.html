@@ -1,102 +1,114 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VoleyGest - Usuarios</title>
-  <link rel="icon" href="imagen/Logo.png" type="imagen/x-icon">
-  <link rel="stylesheet" href="css/EstiloPanel.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoleyGest - Tabla General de Usuarios</title>
+<link rel="icon" href="imagen/Logo.png" type="imagen/x-icon">
+<link rel="stylesheet" href="css/EstiloPanel.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div id="particles-js"></div>
-  
-  <div class="sidebar">
+<div id="particles-js"></div>
+<div class="sidebar">
     <div class="logo">
-      <img src="imagen/Logo.png" alt="Logo VoleyGest">
-      <span>VoleyGest</span>
+        <img src="imagen/Logo.png" alt="Logo VoleyGest">
+        <span>VoleyGest</span>
     </div>
     <nav class="nav-menu">
-      <a href="Panel.html" class="nav-item" id="inicioBtn"><i class="fas fa-home"></i><span>Inicio</span></a>
-      <a href="estadisticas.html" class="nav-item" id="estadisticasBtn"><i class="fas fa-chart-line"></i><span>Control Personal</span></a>
-      <a href="usuarios.html" class="nav-item active" id="usuariosBtn"><i class="fas fa-users"></i><span>Usuarios</span></a>
-      <a href="configuracion.html" class="nav-item" id="configuracionBtn"><i class="fas fa-cog"></i><span>Configuración</span></a>
-      <a href="index.html" class="nav-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span></a>
+        <a href="Panel.html" class="nav-item" id="inicioBtn"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a href="estadisticas.html" class="nav-item" id="estadisticasBtn"><i class="fas fa-chart-line"></i><span>Control Personal</span></a>
+        <a href="usuarios.html" class="nav-item active" id="usuariosBtn"><i class="fas fa-users"></i><span>Usuarios</span></a>
+        <a href="configuracion.html" class="nav-item" id="configuracionBtn"><i class="fas fa-cog"></i><span>Configuración</span></a>
+        <a href="index.html" class="nav-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span></a>
     </nav>
-  </div>
+</div>
 
-  <div class="main-content">
+<div class="main-content">
     <div class="top-bar" style="display: flex; justify-content: space-between; align-items: center;">
-      
-      <div class="welcome-text" style="font-size: 16px;">
-        ¡Bienvenido, <span id="welcomeUser" style="color: #00d2ff; font-weight: bold;">Martín Quispe</span>!
-      </div>
-
-      <div class="user-info" style="display: flex; align-items: center; gap: 10px;">
-        <i class="fas fa-user-circle"></i>
-        <span>Jugador</span>
-      </div>
-      
+        <div class="welcome-text" style="font-size: 16px;">
+            ¡Bienvenido, <span id="welcomeUser" style="color: #00d2ff; font-weight: bold;">Martín Quispe</span>!
+        </div>
+        <div class="user-info" style="display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-user-circle"></i>
+            <span>Jugador</span>
+        </div>
     </div>
 
     <div class="content">
-      <div class="flex-header">
-        <h1>Gestión de Usuarios</h1>
-      </div>
-      
-      <table class="user-table">
-        <thead>
-          <tr>
-            <th>Nombre / Usuario</th>
-            <th>Correo Electrónico</th>
-            <th>Rol</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- tr sirve pra crear una fila en la tabla  -->
-          <tr>
+        <div class="flex-header">
+            <h1>Base de Datos de Usuarios y Jugadores</h1>
+            <button class="btn-secondary" onclick="window.location.href='registrar-usuario.html'"><i class="fas fa-user-plus"></i> Registrar Nuevo</button>
+        </div>
+        <p class="subtext">Listado completo sincronizado en tiempo real desde Supabase.</p>
 
-            <!-- td sirve para crear una celda de contenido común dentro de una tabla en HTML -->
-            <td>Martin Quispe(Jugador)</td>
-            <td>MartinQuispe02.voley@email.com</td>
-            <td><span class="badge badge-trainer">Armador Principal</span></td>
-            <td class="status-active"><i class="fas fa-circle status-icon"></i> Activo</td>
-            <td>
-              <button class="btn-action"><i class="fas fa-edit"></i></button>
-              <button class="btn-action delete"><i class="fas fa-trash-alt"></i></button>
-            </td>
-          </tr>
-          <tr>
-            <td>Admin VoleyGest</td>
-            <td>admin@voleygest.com</td>
-            <td><span class="badge badge-admin">Administrador</span></td>
-            <td class="status-active"><i class="fas fa-circle status-icon"></i> Activo</td>
-            <td>
-              <button class="btn-action"><i class="fas fa-edit"></i></button>
-              <button class="btn-action delete"><i class="fas fa-trash-alt"></i></button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <div class="stats-section" style="margin-top: 20px;">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Nombre Completo</th>
+                        <th>DNI</th>
+                        <th>Categoría</th>
+                        <th>Posición</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaUsuariosSupabase">
+                    <tr>
+                        <td colspan="5" style="text-align: center;">Cargando datos desde la base de datos...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-  </div>
+</div>
 
+<script>
+async function cargarJugadoresSupabase() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('jugadores')
+            .select('*')
+            .order('id', { ascending: false });
 
+        if (error) {
+            console.error('Error al obtener jugadores:', error);
+            return;
+        }
 
-  <!-- 1. Librería oficial de Supabase desde el CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- 2. Archivo de configuración (ruta corregida sin 'public/') -->
-    <script src="api/config.js"></script>
-    
-    <!-- 3. Lógica del CRUD -->
-    <script src="js/api.js"></script>
-    
-    <!-- 4. Control general de la interfaz -->
-    <script src="js/main.js"></script>
+        const tbody = document.getElementById('tablaUsuariosSupabase');
+        tbody.innerHTML = '';
 
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No hay jugadores registrados todavía.</td></tr>`;
+            return;
+        }
 
+        data.forEach(jugador => {
+            const fila = `
+                <tr>
+                    <td><strong>${jugador.nombre_completo}</strong></td>
+                    <td>DNI: ${jugador.dni}</td>
+                    <td><span class="badge badge-trainer">${jugador.categoria}</span></td>
+                    <td>${jugador.posicion}</td>
+                    <td class="status-active"><i class="fas fa-circle status-icon"></i> ${jugador.estado}</td>
+                </tr>
+            `;
+            tbody.insertAdjacentHTML('beforeend', fila);
+        });
+
+    } catch (err) {
+        console.error('Error de conexión con Supabase:', err);
+    }
+}
+
+// Ejecutar al cargar la página
+window.addEventListener('DOMContentLoaded', cargarJugadoresSupabase);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="api/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
