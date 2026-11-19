@@ -1,75 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VoleyGest - Registro</title>
-    <link rel="stylesheet" href="css/EstiloLogin.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="icon" type="imagen/x-icon" href="imagen/Logo.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoleyGest - Registro</title>
+<link rel="stylesheet" href="css/EstiloLogin.css">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<link rel="icon" type="imagen/x-icon" href="imagen/Logo.png">
 </head>
 <body style="background-image: url('imagen/Fondo.png'); background-repeat: no-repeat;">
-    <DIV class="wrapper">
-     <form action="">
-        <img src="imagen/Logo.png" class="Logo">
-        <!--TITULO REGISTRARSE-->
+<div class="wrapper">
+    <form id="formRegistro" onsubmit="registrarCuenta(event)">
+        <img src="imagen/Logo.png" class="Logo" alt="Logo">
         <h1>REGISTRARSE</h1>
         
-        <!--CONTENEDOR DE USUARIO-->
         <div class="input-box">
-        <input type="text" id="usuario" placeholder="Usuario" required>
-        <i class='bx bxs-user'></i>
+            <input type="text" id="usuario" placeholder="Usuario" required>
+            <i class='bx bxs-user'></i>
         </div>
         
-        <!--CONTENEDOR DE CORREO ELECTRÓNICO-->
         <div class="input-box">
-        <input type="email" id="correo" placeholder="Correo Electrónico" required>
-        <i class='bx bxs-envelope'></i>
+            <input type="email" id="correo" placeholder="Correo Electrónico" required>
+            <i class='bx bxs-envelope'></i>
         </div>
         
-        <!--CONTENEDOR DE CONTRASEÑA-->
         <div class="input-box">
-        <input type="password" id="contraseña" placeholder="Contraseña" required>
-        <i class='bx bxs-lock-alt'></i>
+            <input type="password" id="contraseña" placeholder="Contraseña" required>
+            <i class='bx bxs-lock-alt'></i>
         </div>
         
-        <!--CONTENEDOR DE CONFIRMAR CONTRASEÑA-->
         <div class="input-box">
-        <input type="password" id="confirmar-contraseña" placeholder="Confirmar Contraseña" required>
-        <i class='bx bxs-lock-alt'></i>
+            <input type="password" id="confirmar-contraseña" placeholder="Confirmar Contraseña" required>
+            <i class='bx bxs-lock-alt'></i>
         </div>
-        
-        <!--CHECKBOX DE TÉRMINOS Y CONDICIONES-->
+
         <div class="remember-forgot">
             <label>
                 <input type="checkbox" required> Acepto los<br>términos y condiciones
             </label>
         </div>
-        
-        <!--BOTÓN DE REGISTRO-->
+
         <button type="submit" class="btn">Registrarse</button>
         
-        <!--ENLACE PARA VOLVER AL LOGIN-->
         <div class="register-link">
-        <p>¿Ya tienes una cuenta? <a href="index.html">Iniciar Sesión</a></p>
+            <p>¿Ya tienes una cuenta? <a href="index.html">Iniciar Sesión</a></p>
         </div>
-     </form>
-    </DIV>
+    </form>
+</div>
 
+<script>
+async function registrarCuenta(event) {
+    event.preventDefault();
+    const user = document.getElementById('usuario').value.trim();
+    const pass = document.getElementById('contraseña').value.trim();
+    const confirmPass = document.getElementById('confirmar-contraseña').value.trim();
 
+    if (pass !== confirmPass) {
+        alert('Las contraseñas no coinciden.');
+        return;
+    }
 
-<!-- 1. Librería oficial de Supabase desde el CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- 2. Archivo de configuración (ruta corregida sin 'public/') -->
-    <script src="api/config.js"></script>
-    
-    <!-- 3. Lógica del CRUD -->
-    <script src="js/api.js"></script>
-    
-    <!-- 4. Control general de la interfaz -->
-    <script src="js/main.js"></script>
+    try {
+        const { error } = await supabaseClient
+            .from('usuarios')
+            .insert([
+                {
+                    usuario: user,
+                    password: pass,
+                    rol: 'Jugador'
+                }
+            ]);
 
+        if (error) {
+            console.error('Error al registrar:', error);
+            alert('El usuario ya existe o hubo un error al registrar.');
+            return;
+        }
 
+        alert('¡Cuenta registrada con éxito! Ya puedes iniciar sesión.');
+        window.location.href = 'index.html';
+
+    } catch (err) {
+        console.error('Error de conexión:', err);
+        alert('No se pudo conectar con la base de datos.');
+    }
+}
+</script>
+
+<!-- Scripts externos corregidos -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>

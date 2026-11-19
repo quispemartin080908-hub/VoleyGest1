@@ -1,69 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VoleyGest</title>
-    <link rel="stylesheet" href="css/EstiloLogin.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="icon" type="imagen/x-icon" href="imagen/Logo.png">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoleyGest</title>
+<link rel="stylesheet" href="css/EstiloLogin.css">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<link rel="icon" type="imagen/x-icon" href="imagen/Logo.png">
 </head>
 <body style="background-image: url('imagen/Fondo.png'); background-repeat: no-repeat;">
-    <DIV class="wrapper">
-     <!-- Se añade Panel.html en el action del formulario principal para asegurar la validación -->
-     <form action="Panel.html">
-        <img src="imagen/Logo.png" class="Logo">
-
-        <!--TITULO INICIAR SESIÓN-->
+<div class="wrapper">
+    <form id="formLogin" onsubmit="iniciarSesion(event)">
+        <img src="imagen/Logo.png" class="Logo" alt="Logo">
         <h1>INICIAR SESIÓN</h1>
+        
+        <div class="input-box">
+            <input type="text" id="usuario" placeholder="Usuario" required>
+            <i class='bx bxs-user'></i>
+        </div>
+        
+        <div class="input-box">
+            <input type="password" id="contraseña" placeholder="Contraseña" required>
+            <i class='bx bxs-lock-alt'></i>
+        </div>
 
-        <!--CONTENEDOR DE USUARIO-->
-        <div class="input-box">
-        <input type="text" id="usuario" placeholder="Usuario" required>
-        <i class='bx bxs-user'></i>
-        </div>
-        
-        <!--CONTENEDOR DE CONTRASEÑA-->
-        <div class="input-box">
-        <input type="password" id="contraseña" placeholder="Contraseña" required>
-        <i class='bx bxs-lock-alt'></i>
-        </div>
-        
-        <!-- CONTENEDOR CON ESPACIO EN EL CENTRO -->
-        <div class="remember-forgot">
-            <!-- Izquierda: Checkbox con texto dividido en dos líneas -->
-            <label>
-                <input type="checkbox"> Volver a<br>recordarme
-            </label>
-            
-            <a href="RecuperarContraseña.html" style="text-align: right;">Olvidaste tu<br>contraseña?</a>
-        </div>
-        
-        <!-- Se removió el <form> interno duplicado, el botón ahora envía el formulario principal -->
         <button type="submit" class="btn">Ingresar</button>
         
         <div class="register-link">
-        <p>No tengo una cuenta <a href="Registro.html">Registrarme</a></p>
+            <p>No tengo una cuenta <a href="Registro.html">Registrarme</a></p>
         </div>
-     </form>
-    </DIV>
+    </form>
+</div>
 
+<script>
+async function iniciarSesion(event) {
+    event.preventDefault();
+    const user = document.getElementById('usuario').value.trim();
+    const pass = document.getElementById('contraseña').value.trim();
 
+    try {
+        const { data, error } = await supabaseClient
+            .from('usuarios')
+            .select('*')
+            .eq('usuario', user)
+            .eq('password', pass)
+            .single();
 
-   <!-- 1. Librería oficial de Supabase desde el CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- 2. Archivo de configuración (ruta corregida sin 'public/') -->
-    <script src="api/config.js"></script>
-    
-    <!-- 3. Lógica del CRUD -->
-    <script src="js/api.js"></script>
-    
-    <!-- 4. Control general de la interfaz -->
-    <script src="js/main.js"></script>
+        if (error || !data) {
+            alert('Usuario o contraseña incorrectos.');
+            return;
+        }
 
+        alert('¡Bienvenido de nuevo, ' + data.usuario + '!');
+        window.location.href = 'Panel.html';
 
+    } catch (err) {
+        console.error('Error de inicio de sesión:', err);
+        alert('Error al conectar con la base de datos.');
+    }
+}
+</script>
 
+<!-- Scripts externos corregidos -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
