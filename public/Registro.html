@@ -52,6 +52,7 @@
 async function registrarCuenta(event) {
     event.preventDefault();
     const user = document.getElementById('usuario').value.trim();
+    const email = document.getElementById('correo').value.trim();
     const pass = document.getElementById('contraseña').value.trim();
     const confirmPass = document.getElementById('confirmar-contraseña').value.trim();
 
@@ -61,19 +62,20 @@ async function registrarCuenta(event) {
     }
 
     try {
-        const { error } = await supabaseClient
+        const { data, error } = await supabaseClient
             .from('usuarios')
             .insert([
                 {
                     usuario: user,
+                    correo: email,
                     password: pass,
                     rol: 'Jugador'
                 }
             ]);
 
         if (error) {
-            console.error('Error al registrar:', error);
-            alert('El usuario ya existe o hubo un error al registrar.');
+            console.error('Error detallado de Supabase:', error);
+            alert('Error de Supabase: ' + error.message);
             return;
         }
 
