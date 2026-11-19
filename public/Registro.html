@@ -36,7 +36,7 @@
 
         <div class="remember-forgot">
             <label>
-                <input type="checkbox" required> Acepto los<br>términos y condiciones
+                <input type="checkbox" required> Acepto los términos y condiciones
             </label>
         </div>
 
@@ -47,6 +47,11 @@
         </div>
     </form>
 </div>
+
+<!-- 1. PRIMERO LA LIBRERÍA DE SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- 2. SEGUNDO TU CONFIGURACIÓN -->
+<script src="js/config.js"></script>
 
 <script>
 async function registrarCuenta(event) {
@@ -62,8 +67,7 @@ async function registrarCuenta(event) {
     }
 
     try {
-        // Intentamos guardar directamente en Supabase
-        const { error } = await supabaseClient
+        const { data, error } = await supabaseClient
             .from('usuarios')
             .insert([
                 {
@@ -75,8 +79,8 @@ async function registrarCuenta(event) {
             ]);
 
         if (error) {
-            // Si el usuario ya existe en Supabase, avisamos de forma clara
-            alert('El nombre de usuario ya está en uso. Prueba con otro.');
+            console.error('Error de Supabase:', error);
+            alert('El usuario ya existe o hubo un error al registrar.');
             return;
         }
 
@@ -84,16 +88,10 @@ async function registrarCuenta(event) {
         window.location.href = 'index.html';
 
     } catch (err) {
-        console.error('Error:', err);
-        alert('Error al registrar la cuenta.');
+        console.error('Error de conexión:', err);
+        alert('No se pudo conectar con la base de datos.');
     }
 }
 </script>
-
-<!-- Scripts externos corregidos -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js"></script>
-<script src="js/api.js"></script>
-<script src="js/main.js"></script>
 </body>
 </html>
