@@ -62,7 +62,8 @@ async function registrarCuenta(event) {
     }
 
     try {
-        const { data, error } = await supabaseClient
+        // Intentamos guardar directamente en Supabase
+        const { error } = await supabaseClient
             .from('usuarios')
             .insert([
                 {
@@ -74,8 +75,8 @@ async function registrarCuenta(event) {
             ]);
 
         if (error) {
-            console.error('Error detallado de Supabase:', error);
-            alert('Error de Supabase: ' + error.message);
+            // Si el usuario ya existe en Supabase, avisamos de forma clara
+            alert('El nombre de usuario ya está en uso. Prueba con otro.');
             return;
         }
 
@@ -83,8 +84,8 @@ async function registrarCuenta(event) {
         window.location.href = 'index.html';
 
     } catch (err) {
-        console.error('Error de conexión:', err);
-        alert('No se pudo conectar con la base de datos.');
+        console.error('Error:', err);
+        alert('Error al registrar la cuenta.');
     }
 }
 </script>
