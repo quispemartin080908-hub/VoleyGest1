@@ -1,6 +1,6 @@
 
 async function obtenerUsuarios() {
-    let { data: jugadores, error } = await _supabase
+    let { data: jugadores, error } = await supabaseClient
         .from('jugadores')
         .select('*')
         .order('id', { ascending: false });
@@ -48,7 +48,7 @@ async function registrarJugador(event) {
     const dni = inputs[1].value;
     const categoria = inputs[2].value;
 
-    const { data, error } = await _supabase
+    const { data, error } = await supabaseClient
         .from('jugadores')
         .insert([
             { nombre_completo: nombre, dni: dni, categoria: categoria }
@@ -71,7 +71,7 @@ async function eliminarJugador(id) {
     const confirmar = confirm("¿Estás seguro de eliminar este registro?");
     if (!confirmar) return;
 
-    const { error } = await _supabase
+    const { error } = await supabaseClient
         .from('jugadores')
         .delete()
         .eq('id', id);
