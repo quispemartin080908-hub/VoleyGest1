@@ -42,11 +42,19 @@ function renderizarTablaJugadores(jugadores) {
 async function registrarJugador(event) {
     event.preventDefault(); // Evita que la página se recargue sola
 
-    // Capturamos los valores de los inputs del formulario en registrar-usuario.html
-    const inputs = document.querySelectorAll('.config-box-register input');
-    const nombre = inputs[0].value;
-    const dni = inputs[1].value;
-    const categoria = inputs[2].value;
+    // Buscamos los inputs por su tipo o selector dentro del formulario de forma segura
+    const form = event.target;
+    const inputs = form.querySelectorAll('input');
+
+    // Validamos que existan al menos 3 inputs para evitar errores
+    if (inputs.length < 3) {
+        alert("Faltan campos por completar en el formulario.");
+        return;
+    }
+
+    const nombre = inputs[0].value.trim();
+    const dni = inputs[1].value.trim();
+    const categoria = inputs[2].value.trim();
 
     const { data, error } = await supabaseClient
         .from('jugadores')
